@@ -22,6 +22,10 @@ class PlanetariumDome(models.Model):
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
 
+    @property
+    def capacity(self) -> int:
+        return self.rows * self.seats_in_row
+
     def __str__(self):
         return self.name
 
@@ -47,16 +51,23 @@ class Reservation(models.Model):
     def __str__(self):
         return f"User: {self.user} | {self.created_at}"
 
+    class Meta:
+        ordering = ("created_at", )
+
 
 class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
     show_session = models.ForeignKey(
-        ShowSession, on_delete=models.CASCADE, related_name="ticket"
+        ShowSession, on_delete=models.CASCADE, related_name="tickets"
     )
     reservation = models.ForeignKey(
-        Reservation, on_delete=models.CASCADE, related_name="ticket"
+        Reservation, on_delete=models.CASCADE, related_name="tickets"
     )
 
     def __str__(self):
         return f"{self.show_session} | Row: {self.row} | Seat: {self.seat}"
+
+    class Meta:
+        unique_together = ("show_session", "row", "seat")
+        ordering = ("row", "seat")
