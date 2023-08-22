@@ -27,7 +27,7 @@ class AstronomyShowSerializer(serializers.ModelSerializer):
 class PlanetariumDomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlanetariumDome
-        fields = "__all__"
+        fields = ("id", "name", "rows", "seats_in_row", "capacity")
         read_only_fields = ("id", )
 
 
@@ -36,6 +36,11 @@ class ShowSessionSerializer(serializers.ModelSerializer):
         model = ShowSession
         fields = "__all__"
         read_only_fields = ("id", )
+
+
+class ShowSessionDetailSerializer(ShowSessionSerializer):
+    astronomy_show = AstronomyShowSerializer(many=False, read_only=True)
+    planetarium_dome = PlanetariumDomeSerializer(many=False, read_only=True)
 
 
 class ReservationSerializer(serializers.ModelSerializer):
