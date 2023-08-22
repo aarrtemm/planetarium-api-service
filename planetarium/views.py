@@ -60,10 +60,14 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         date = self.request.query_params.get("date")
+        title = self.request.query_params.get("title")
 
         if date:
             date = datetime.strptime(date, "%Y-%m-%d").date()
             queryset = queryset.filter(show_time__date=date)
+
+        if title:
+            queryset = queryset.filter(astronomy_show__title__icontains=title)
 
         return queryset
 
