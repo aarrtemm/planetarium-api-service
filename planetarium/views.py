@@ -1,9 +1,26 @@
-from django.shortcuts import render
-from rest_framework import viewsets
+from datetime import datetime
 
-from planetarium.models import ShowTheme, AstronomyShow, PlanetariumDome, ShowSession, Reservation, Ticket
-from planetarium.serializers import ShowThemeSerializer, AstronomyShowSerializer, PlanetariumDomeSerializer, \
-    ShowSessionSerializer, ReservationSerializer, TicketSerializer
+from django.db.models import F, Count
+from rest_framework import viewsets, mixins
+from rest_framework.viewsets import GenericViewSet
+
+from planetarium.models import (
+    ShowTheme,
+    AstronomyShow,
+    PlanetariumDome,
+    ShowSession,
+    Reservation,
+    Ticket,
+)
+from planetarium.serializers import (
+    ShowThemeSerializer,
+    AstronomyShowSerializer,
+    PlanetariumDomeSerializer,
+    ShowSessionSerializer,
+    ReservationSerializer,
+    TicketSerializer,
+    ShowSessionDetailSerializer, ReservationListSerializer, ShowSessionListSerializer,
+)
 
 
 class ShowThemeViewSet(viewsets.ModelViewSet):
@@ -22,15 +39,60 @@ class PlanetariumDomeViewSet(viewsets.ModelViewSet):
 
 
 class ShowSessionViewSet(viewsets.ModelViewSet):
-    queryset = ShowSession.objects.all()
+    queryset = (
+        ShowSession.objects.all()
+        .annotate(
+            tickets_available=(
+                F("planetarium_dome__rows") * F("planetarium_dome__seats_in_row")
+                - Count("tickets")
+            )
+        )
+    )
     serializer_class = ShowSessionSerializer
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ShowSessionListSerializer
+        if self.action == "retrieve":
+            return ShowSessionDetailSerializer
+        return ShowSessionSerializer
 
-class ReservationViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        queryset = self.queryset
+        date = self.request.query_params.get("date")
+
+        if date:
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+            queryset = queryset.filter(show_time__date=date)
+
+        return queryset
+
+
+class ReservationViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+
+    def get_queryset(self):
+        return Reservation.objects.filter(user=self.request.user).prefetch_related(
+            "tickets__show_session",
+            "tickets__show_session__astronomy_show",
+            "tickets__show_session__planetarium_dome"
+        )
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ReservationListSerializer
+        return ReservationSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+
