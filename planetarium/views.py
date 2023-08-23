@@ -26,6 +26,7 @@ from planetarium.serializers import (
     ShowSessionSerializer,
     ReservationSerializer,
     ShowSessionDetailSerializer, ReservationListSerializer, ShowSessionListSerializer, AstronomyShowListSerializer,
+    AstronomyShowDetailSerializer, ShowImageSerializer,
 )
 
 
@@ -49,6 +50,7 @@ class AstronomyShowViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.RetrieveModelMixin,
     GenericViewSet
 ):
     queryset = AstronomyShow.objects.all().prefetch_related(
@@ -61,6 +63,10 @@ class AstronomyShowViewSet(
     def get_serializer_class(self):
         if self.action == "list":
             return AstronomyShowListSerializer
+        if self.action == "retrieve":
+            return AstronomyShowDetailSerializer
+        if self.action == "upload_image":
+            return ShowImageSerializer
         return AstronomyShowSerializer
 
     @staticmethod
@@ -93,9 +99,9 @@ class AstronomyShowViewSet(
         methods=["POST"],
         detail=True,
         url_path="upload-image",
-        permission_classes=[IsAdminUser]
+        permission_classes=[IsAdminUser, ]
     )
-    def upload_image(self, request):
+    def upload_image(self, request, pk=None):
         show = self.get_object()
         serializer = self.get_serializer(show, data=request.data)
 
