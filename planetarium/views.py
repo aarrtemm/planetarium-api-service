@@ -61,6 +61,32 @@ class AstronomyShowViewSet(
             return AstronomyShowListSerializer
         return AstronomyShowSerializer
 
+    @staticmethod
+    def _params_to_ints(qs):
+        return [int(str_id) for str_id in qs.split(",")]
+
+    def get_queryset(self):
+        queryset = self.queryset
+        themes = self.request.query_params.get("themes")
+
+        if themes:
+            themes_ids = self._params_to_ints(themes)
+            queryset = queryset.filter(themes__id__in=themes_ids)
+
+        return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "themes",
+                type={"type": "list", "items": {"type": "number"}},
+                description="Filtering by themes (ex. ?themes=1,2)"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class PlanetariumDomeViewSet(
     mixins.ListModelMixin,
