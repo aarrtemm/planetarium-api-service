@@ -49,24 +49,25 @@ class ShowThemeViewSet(
 class AstronomyShowViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
     mixins.RetrieveModelMixin,
-    GenericViewSet
+    viewsets.GenericViewSet
 ):
     queryset = AstronomyShow.objects.all().prefetch_related(
         "themes"
     )
     serializer_class = AstronomyShowSerializer
-    pagination_class = DefaultPagination
     permission_classes = (IsAdminOrAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
             return AstronomyShowListSerializer
+
         if self.action == "retrieve":
             return AstronomyShowDetailSerializer
+
         if self.action == "upload_image":
             return ShowImageSerializer
+
         return AstronomyShowSerializer
 
     @staticmethod
@@ -139,7 +140,6 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = ShowSessionSerializer
-    pagination_class = ShowSessionPagination
     permission_classes = (IsAdminOrAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
