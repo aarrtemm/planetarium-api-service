@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.db.models import F, Count
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 from rest_framework.pagination import PageNumberPagination
 from planetarium.permissions import IsAdminOrAuthenticatedOrReadOnly
@@ -21,7 +23,7 @@ from planetarium.serializers import (
     PlanetariumDomeSerializer,
     ShowSessionSerializer,
     ReservationSerializer,
-    ShowSessionDetailSerializer, ReservationListSerializer, ShowSessionListSerializer,
+    ShowSessionDetailSerializer, ReservationListSerializer, ShowSessionListSerializer, AstronomyShowListSerializer,
 )
 
 
@@ -47,10 +49,17 @@ class AstronomyShowViewSet(
     mixins.UpdateModelMixin,
     GenericViewSet
 ):
-    queryset = AstronomyShow.objects.all()
+    queryset = AstronomyShow.objects.all().prefetch_related(
+        "themes"
+    )
     serializer_class = AstronomyShowSerializer
     pagination_class = DefaultPagination
     permission_classes = (IsAdminOrAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AstronomyShowListSerializer
+        return AstronomyShowSerializer
 
 
 class PlanetariumDomeViewSet(
@@ -104,6 +113,23 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(astronomy_show__title__icontains=title)
 
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "date",
+                type=OpenApiTypes.DATE,
+                description="Filtering by date (ex. ?date=2012-12-12)"
+            ),
+            OpenApiParameter(
+                "title",
+                type=str,
+                description="Filtering by title (ex. ?title=Sun)"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class ReservationPagination(PageNumberPagination):
