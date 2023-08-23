@@ -58,6 +58,7 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
         return ShowSessionSerializer
 
     def get_queryset(self):
+        """Retrieve the movies with filters"""
         queryset = self.queryset
         date = self.request.query_params.get("date")
         title = self.request.query_params.get("title")
