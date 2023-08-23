@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.db.models import F, Count
 from rest_framework import viewsets, mixins
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import GenericViewSet
 
 from planetarium.models import (
@@ -18,24 +19,49 @@ from planetarium.serializers import (
     PlanetariumDomeSerializer,
     ShowSessionSerializer,
     ReservationSerializer,
-    TicketSerializer,
     ShowSessionDetailSerializer, ReservationListSerializer, ShowSessionListSerializer,
 )
 
 
-class ShowThemeViewSet(viewsets.ModelViewSet):
+class DefaultPagination(PageNumberPagination):
+    page_size = 5
+    max_page_size = 100
+
+
+class ShowThemeViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
     queryset = ShowTheme.objects.all()
     serializer_class = ShowThemeSerializer
+    pagination_class = DefaultPagination
 
 
-class AstronomyShowViewSet(viewsets.ModelViewSet):
+class AstronomyShowViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    GenericViewSet
+):
     queryset = AstronomyShow.objects.all()
     serializer_class = AstronomyShowSerializer
+    pagination_class = DefaultPagination
 
 
-class PlanetariumDomeViewSet(viewsets.ModelViewSet):
+class PlanetariumDomeViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
     queryset = PlanetariumDome.objects.all()
     serializer_class = PlanetariumDomeSerializer
+    pagination_class = DefaultPagination
+
+
+class ShowSessionPagination(PageNumberPagination):
+    page_size = 4
+    max_page_size = 100
 
 
 class ShowSessionViewSet(viewsets.ModelViewSet):
@@ -49,6 +75,7 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = ShowSessionSerializer
+    pagination_class = ShowSessionPagination
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -73,6 +100,11 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
         return queryset
 
 
+class ReservationPagination(PageNumberPagination):
+    page_size = 2
+    max_page_size = 100
+
+
 class ReservationViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -80,6 +112,7 @@ class ReservationViewSet(
 ):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+    pagination_class = ReservationPagination
 
     def get_queryset(self):
         return Reservation.objects.filter(user=self.request.user).prefetch_related(
@@ -95,9 +128,3 @@ class ReservationViewSet(
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-
-class TicketViewSet(viewsets.ModelViewSet):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
-
