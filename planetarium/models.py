@@ -12,6 +12,7 @@ class ShowTheme(models.Model):
 
 class AstronomyShow(models.Model):
     title = models.CharField(max_length=63)
+    themes = models.ManyToManyField(ShowTheme)
     description = models.TextField()
 
     def __str__(self):
