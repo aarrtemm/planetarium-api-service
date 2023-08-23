@@ -15,7 +15,6 @@ from planetarium.models import (
     PlanetariumDome,
     ShowSession,
     Reservation,
-    Ticket,
 )
 from planetarium.serializers import (
     ShowThemeSerializer,
