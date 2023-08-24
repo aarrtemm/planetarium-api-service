@@ -47,3 +47,22 @@ Contributions are welcome! If you have any suggestions, bug reports, or feature 
 ## DB 
 ![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/b752a705-4994-452e-a248-6ba02980b41b)
 
+### Main page
+![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/b505b741-e6a5-4694-bfb0-175410b4e9eb)
+
+### Register page
+![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/0787953c-a268-4350-856f-97f2a0f50dcd)
+
+### Get token page
+![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/3dbb8283-4a65-41e3-b900-d827b7d2d741)
+
+### Refresh token page
+![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/56335a0e-83b9-4254-833e-9ab938d3ab25)
+
+### Verify token page
+![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/7c444fa5-7598-46be-9da1-e424da9cc76d)
+
+
+
+
+
