@@ -38,6 +38,7 @@ class PlanetariumDome(models.Model):
 
     @property
     def capacity(self) -> int:
+        """Calculates capacity domes."""
         return self.rows * self.seats_in_row
 
     def __str__(self):

@@ -75,6 +75,7 @@ class AstronomyShowViewSet(
         return [int(str_id) for str_id in qs.split(",")]
 
     def get_queryset(self):
+        """Retrieve the astronomy show with filter."""
         queryset = self.queryset
         themes = self.request.query_params.get("themes")
 
@@ -103,6 +104,7 @@ class AstronomyShowViewSet(
         permission_classes=[IsAdminUser, ]
     )
     def upload_image(self, request, pk=None):
+        """Endpoint for uploading image to specific movie."""
         show = self.get_object()
         serializer = self.get_serializer(show, data=request.data)
 
@@ -150,7 +152,7 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
         return ShowSessionSerializer
 
     def get_queryset(self):
-        """Retrieve the movies with filters"""
+        """Retrieve the astronomy show with filters."""
         queryset = self.queryset
         date = self.request.query_params.get("date")
         title = self.request.query_params.get("title")
