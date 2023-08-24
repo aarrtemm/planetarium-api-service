@@ -45,7 +45,7 @@ python manage.py runserver
 Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue or submit a pull request.
 
 ## DB 
-![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/b752a705-4994-452e-a248-6ba02980b41b)
+![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/c256677a-2a41-4e35-ae3b-8721b3db187b)
 
 ### Main page
 ![image](https://github.com/aarrtemm/planetarium-api-service/assets/115632117/b505b741-e6a5-4694-bfb0-175410b4e9eb)
