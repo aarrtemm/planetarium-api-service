@@ -18,12 +18,12 @@ def movie_image_file_path(instance, filename):
     _, extension = os.path.splitext(filename)
     filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
 
-    return os.path.join("uploads/shows/", filename)
+    return os.path.join("uploads", "shows", filename)
 
 
 class AstronomyShow(models.Model):
     title = models.CharField(max_length=63)
-    themes = models.ManyToManyField(ShowTheme)
+    themes = models.ManyToManyField(ShowTheme, related_name="astronomy_show")
     description = models.TextField()
     image = models.ImageField(null=True, upload_to=movie_image_file_path)
 
