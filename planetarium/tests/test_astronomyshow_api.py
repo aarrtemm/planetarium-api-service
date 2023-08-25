@@ -219,7 +219,7 @@ class AuthenticatedMovieApiTest(TestCase):
         self.assertIn(serializer2.data, response1.data)
         self.assertNotIn(serializer3.data, response1.data)
 
-    def test_movie_retrieve(self):
+    def test_show_retrieve(self):
         show = sample_show(title="ShowTest")
         url = detail_url(show.id)
 
@@ -230,7 +230,7 @@ class AuthenticatedMovieApiTest(TestCase):
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         self.assertEquals(serializer.data, response.data)
 
-    def test_create_movie_forbidden(self):
+    def test_create_show_forbidden(self):
         payload = {
             "title": "MovieTest",
             "description": "TestDes",
@@ -251,7 +251,7 @@ class AdminMovieApiTest(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-    def test_create_movie_with_actors_genres(self):
+    def test_create_show_with_themes(self):
         theme = ShowTheme.objects.create(name="testTheme")
         payload = {
             "title": "MovieTest",
@@ -268,7 +268,7 @@ class AdminMovieApiTest(TestCase):
         self.assertEquals(themes.count(), 1)
         self.assertIn(theme, themes)
 
-    def test_create_movie_without_actors_genres(self):
+    def test_create_show_without_themes(self):
         payload = {
             "title": "MovieTest",
             "description": "TestDes",
@@ -278,7 +278,7 @@ class AdminMovieApiTest(TestCase):
 
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_update_movie(self):
+    def test_update_show(self):
         payload = {
             "title": "MovieTest2",
             "description": "testDesc"
