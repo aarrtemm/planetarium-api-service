@@ -23,7 +23,7 @@ def movie_image_file_path(instance, filename):
 
 class AstronomyShow(models.Model):
     title = models.CharField(max_length=63)
-    themes = models.ManyToManyField(ShowTheme)
+    themes = models.ManyToManyField(ShowTheme, related_name="astronomy_shows")
     description = models.TextField()
     image = models.ImageField(null=True, upload_to=movie_image_file_path)
 
